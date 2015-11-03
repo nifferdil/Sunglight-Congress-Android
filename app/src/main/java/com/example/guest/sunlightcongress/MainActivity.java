@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.okhttp.Callback;
@@ -27,15 +28,22 @@ public class MainActivity extends AppCompatActivity {
 
     private Legislator mLegislator;
     private Button mZipCodeButton;
-    private EditText mEnteripCode;
+    private EditText mEnterZipCode;
+    private String mZipCode;
+    private TextView mNameLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mNameLabel = (TextView) findViewById(R.id.nameLabel);
+        mZipCodeButton = (Button) findViewById(R.id.enterZipCodeButton);
+        mEnterZipCode = (EditText) findViewById(R.id.enterZipCode);
+
         String apiKey = "b77ebc6b16a64f1ab2a2a1c8d0271963";
-        String congressURL = "congress.api.sunlightfoundation.com/legislators/locate?zip" + apiKey + "/";
+        String zipCode = mZipCode;
+        String congressURL = "https://congress.api.sunlightfoundation.com/legislators/locate?zip=" + zipCode + "&apikey=" + apiKey;
 
         if (isNetworkAvailable()) {
             OkHttpClient client = new OkHttpClient();
@@ -57,6 +65,12 @@ public class MainActivity extends AppCompatActivity {
                         Log.v(TAG, jsonData);
                         if (response.isSuccessful()) {
                             mLegislator = getLegislatorDetails(jsonData);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateDisplay();
+                                }
+                            });
                         } else {
                             alertUserAboutError();
                         }
@@ -74,41 +88,44 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.network_error_msg, Toast.LENGTH_LONG).show();
         }
         Log.d(TAG, "Main UI code is running");
-    }
-
-    public Legislator getLegislatorDetails(String jsonData) throws JSONException {
-        JSONObject legislatorDetails = new JSONObject(jsonData);
-        String firstName = legislatorDetails.getString("first_name");
-        String lastName = legislatorDetails.getString("last_name");
-
-        //Log.i(TAG, "From JSON: " + zipCode);
-
-        JSONObject currently = legislatorDetails.getJSONObject("currently");
-
-        Legislator legislator = new Legislator();
-
-        legislator.setFirstName(currently.getString("first_name"));
-        legislator.setLastName(currently.getString("last_name"));
-
-        return legislator;
-
 
         mZipCodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mZipCode = mEnterZipCode.getText().toString();
+                mEnterZipCode.setText("");
+                Toast.makeText(getApplicationContext(), "Could not find congresspeople :(", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void updateDisplay() {
+        mNameLabel.setText(mLegislator.getFirstName());
+    }
+
+    public Legislator getLegislatorDetails(String jsonData) throws JSONException {
+        JSONObject legislatorDetails = new JSONObject(jsonData);
+
+        String firstName = legislatorDetails.getString("first_name");
+        String lastName = legislatorDetails.getString("last_name");
+
+
+        Legislator legislator = new Legislator(firstName, lastName);
+
+//        legislator.setFirstName(legislatorDetails.getString("first_name"));
+//        legislator.setLastName(legislatorDetails.getString("last_name"));
+
+        return legislator;
     }
 
     private boolean isNetworkAvailable() {
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        boolean isAvailble = false;
+        boolean isAvailable = false;
         if (networkInfo != null && networkInfo.isConnected()) {
-            isAvailble = true;
+            isAvailable = true;
         }
-        return isNetworkAvailable();
+        return isAvailable;
     }
 
     private void alertUserAboutError() {

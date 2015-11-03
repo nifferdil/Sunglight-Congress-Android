@@ -3,7 +3,11 @@ package com.example.guest.sunlightcongress;
 public class Legislator {
     private String mFirstName;
     private String mLastName;
-    private String mZipCode;
+
+    public Legislator(String firstName, String lastName) {
+        mFirstName = firstName;
+        mLastName = lastName;
+    }
 
     public String getFirstName() {
         return mFirstName;
@@ -21,11 +25,4 @@ public class Legislator {
         mLastName = lastName;
     }
 
-    public String getZipCode() {
-        return mZipCode;
-    }
-
-    public void setZipCode(String zipCode) {
-        mZipCode = zipCode;
-    }
 }
