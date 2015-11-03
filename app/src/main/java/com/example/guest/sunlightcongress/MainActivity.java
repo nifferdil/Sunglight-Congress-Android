@@ -104,16 +104,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public Legislator getLegislatorDetails(String jsonData) throws JSONException {
+
         JSONObject legislatorDetails = new JSONObject(jsonData);
 
         String firstName = legislatorDetails.getString("first_name");
         String lastName = legislatorDetails.getString("last_name");
 
-
         Legislator legislator = new Legislator(firstName, lastName);
-
-//        legislator.setFirstName(legislatorDetails.getString("first_name"));
-//        legislator.setLastName(legislatorDetails.getString("last_name"));
 
         return legislator;
     }
