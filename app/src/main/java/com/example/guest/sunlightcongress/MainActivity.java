@@ -6,6 +6,9 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.squareup.okhttp.Callback;
@@ -23,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
 
     private Legislator mLegislator;
+    private Button mZipCodeButton;
+    private EditText mEnteripCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +35,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         String apiKey = "b77ebc6b16a64f1ab2a2a1c8d0271963";
-        double latitude = 37.8267;
-        double longitude = -122.423;
-        String congressURL = "https://congress.api.sunlightfoundation.com" + apiKey + "/" + latitude + "," + longitude;
+        String congressURL = "congress.api.sunlightfoundation.com/legislators/locate?zip" + apiKey + "/";
 
         if (isNetworkAvailable()) {
             OkHttpClient client = new OkHttpClient();
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                         String jsonData = response.body().string();
                         Log.v(TAG, jsonData);
                         if (response.isSuccessful()) {
-                            mLegislator = getCurrentDetails(jsonData);
+                            mLegislator = getLegislatorDetails(jsonData);
                         } else {
                             alertUserAboutError();
                         }
@@ -73,19 +76,29 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Main UI code is running");
     }
 
-    public Legislator getCurrentDetails(String jsonData) throws JSONException {
+    public Legislator getLegislatorDetails(String jsonData) throws JSONException {
         JSONObject legislatorDetails = new JSONObject(jsonData);
-        String zipCode = legislatorDetails.getString("zipCode");
-        Log.i(TAG, "From JSON: " + zipCode);
+        String firstName = legislatorDetails.getString("first_name");
+        String lastName = legislatorDetails.getString("last_name");
+
+        //Log.i(TAG, "From JSON: " + zipCode);
 
         JSONObject currently = legislatorDetails.getJSONObject("currently");
 
         Legislator legislator = new Legislator();
-        legislator.setZipCode(currently.getString("zipcode"));
-        legislator.setFirstName(currently.getString("firstName"));
-        legislator.setLastName(currently.getString("lastName"));
+
+        legislator.setFirstName(currently.getString("first_name"));
+        legislator.setLastName(currently.getString("last_name"));
 
         return legislator;
+
+
+        mZipCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private boolean isNetworkAvailable() {
