@@ -1,10 +1,10 @@
 package com.example.guest.sunlightcongress;
 
+import android.app.ListActivity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.guest.sunlightcongress.adapters.LegislatorAdapter;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -22,8 +23,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends ListActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private String mZipCode;
     private TextView mNameLabel;
     private TextView mLastNameLabel;
+    private LegislatorAdapter mAdapter;
+    private ArrayList<Legislator> mLegislators;
 
 
     @Override
@@ -41,9 +45,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mNameLabel = (TextView) findViewById(R.id.nameLabel);
-        mLastNameLabel = (TextView) findViewById(R.id.lastNameLabel);
+        //mLastNameLabel = (TextView) findViewById(R.id.lastNameLabel);
         mZipCodeButton = (Button) findViewById(R.id.enterZipCodeButton);
         mEnterZipCode = (EditText) findViewById(R.id.enterZipCode);
+
+        mLegislators = new ArrayList<Legislator>();
+
+        mAdapter = new LegislatorAdapter(this, mLegislators);
+        setListAdapter(mAdapter);
 
 
         mZipCodeButton.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 mZipCode = mEnterZipCode.getText().toString();
                 mEnterZipCode.setText("");
                 findRepresentatives(mZipCode);
-                Toast.makeText(getApplicationContext(), "Could not find congresspeople :(", Toast.LENGTH_LONG).show();
+
             }
         });
     }
@@ -80,22 +89,26 @@ public class MainActivity extends AppCompatActivity {
                         String jsonData = response.body().string();
                         Log.v(TAG, jsonData);
                         if (response.isSuccessful()) {
-                            mLegislator = getLegislatorDetails(jsonData);
+                            mLegislators = getLegislatorDetails(jsonData);
+                            if(mLegislators != null){
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    updateDisplay();
+                                    mAdapter.notifyDataSetChanged();
                                 }
-                            });
+                            });} else {alertUserAboutError();}
                         } else {
                             alertUserAboutError();
                         }
                     }
                     catch (IOException e) {
                         Log.e(TAG, "Exception caught: ", e);
+                        Toast.makeText(getApplicationContext(), "Could not find congresspeople :(", Toast.LENGTH_LONG).show();
                     }
                     catch (JSONException e) {
                         Log.e(TAG, "Exception caught: ", e);
+                        Toast.makeText(getApplicationContext(), "Could not find congresspeople :(", Toast.LENGTH_LONG).show();
+
                     }
                 }
             });
@@ -112,18 +125,24 @@ public class MainActivity extends AppCompatActivity {
         mLastNameLabel.setText(mLegislator.getLastName());
     }
 
-    public Legislator getLegislatorDetails(String jsonData) throws JSONException {
+    public ArrayList<Legislator> getLegislatorDetails(String jsonData) throws JSONException {
 
         JSONObject legislatorDetails = new JSONObject(jsonData);
         JSONArray representatives = legislatorDetails.getJSONArray("results");
-        JSONObject secondObject = representatives.getJSONObject(0);
+        if (representatives.length() == 0){
+            return null;
+        }
+        for (int i = 0; i < representatives.length(); i++) {
+            JSONObject nextLegistlator = representatives.getJSONObject(i);
 
-        String firstName = secondObject.getString("first_name");
-        String lastName = secondObject.getString("last_name");
+            String firstName = nextLegistlator.getString("first_name");
+            String lastName = nextLegistlator.getString("last_name");
 
-        Legislator legislator = new Legislator(firstName, lastName);
+            Legislator legislator = new Legislator(firstName, lastName);
+            mLegislators.add(legislator);
+        }
 
-        return legislator;
+        return mLegislators;
     }
 
     private boolean isNetworkAvailable() {

@@ -25,4 +25,8 @@ public class Legislator {
         mLastName = lastName;
     }
 
+    public String getFullName() {
+        return mFirstName + " " + mLastName;
+    }
+
 }

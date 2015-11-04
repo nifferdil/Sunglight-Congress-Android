@@ -15,7 +15,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="139dp"
-        android:text="Zip code"
         android:hint="5-digit zip code"/>
 
     <TextView
@@ -35,21 +34,13 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ListView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/nameLabel"
+        android:id="@android:id/list"
         android:layout_below="@+id/enterZipCodeButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="69dp"/>
+        android:layout_marginTop="34dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/lastNameLabel"
-        android:layout_alignTop="@+id/nameLabel"
-        android:layout_toRightOf="@+id/enterZipCode"
-        android:layout_toEndOf="@+id/enterZipCode"/>
 </RelativeLayout>
