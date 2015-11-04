@@ -43,4 +43,13 @@
         android:layout_below="@+id/enterZipCodeButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="69dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/lastNameLabel"
+        android:layout_alignTop="@+id/nameLabel"
+        android:layout_toRightOf="@+id/enterZipCode"
+        android:layout_toEndOf="@+id/enterZipCode"/>
 </RelativeLayout>

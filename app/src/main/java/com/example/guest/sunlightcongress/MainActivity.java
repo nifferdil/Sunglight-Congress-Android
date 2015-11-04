@@ -17,6 +17,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText mEnterZipCode;
     private String mZipCode;
     private TextView mNameLabel;
+    private TextView mLastNameLabel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +41,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mNameLabel = (TextView) findViewById(R.id.nameLabel);
+        mLastNameLabel = (TextView) findViewById(R.id.lastNameLabel);
         mZipCodeButton = (Button) findViewById(R.id.enterZipCodeButton);
         mEnterZipCode = (EditText) findViewById(R.id.enterZipCode);
 
+
+        mZipCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mZipCode = mEnterZipCode.getText().toString();
+                mEnterZipCode.setText("");
+                findRepresentatives(mZipCode);
+                Toast.makeText(getApplicationContext(), "Could not find congresspeople :(", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void findRepresentatives(String zipCode) {
         String apiKey = "b77ebc6b16a64f1ab2a2a1c8d0271963";
-        String zipCode = mZipCode;
         String congressURL = "https://congress.api.sunlightfoundation.com/legislators/locate?zip=" + zipCode + "&apikey=" + apiKey;
 
         if (isNetworkAvailable()) {
@@ -89,26 +105,21 @@ public class MainActivity extends AppCompatActivity {
         }
         Log.d(TAG, "Main UI code is running");
 
-        mZipCodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mZipCode = mEnterZipCode.getText().toString();
-                mEnterZipCode.setText("");
-                Toast.makeText(getApplicationContext(), "Could not find congresspeople :(", Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     private void updateDisplay() {
         mNameLabel.setText(mLegislator.getFirstName());
+        mLastNameLabel.setText(mLegislator.getLastName());
     }
 
     public Legislator getLegislatorDetails(String jsonData) throws JSONException {
 
         JSONObject legislatorDetails = new JSONObject(jsonData);
+        JSONArray representatives = legislatorDetails.getJSONArray("results");
+        JSONObject secondObject = representatives.getJSONObject(0);
 
-        String firstName = legislatorDetails.getString("first_name");
-        String lastName = legislatorDetails.getString("last_name");
+        String firstName = secondObject.getString("first_name");
+        String lastName = secondObject.getString("last_name");
 
         Legislator legislator = new Legislator(firstName, lastName);
 
