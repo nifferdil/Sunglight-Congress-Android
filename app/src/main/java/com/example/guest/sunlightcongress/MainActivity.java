@@ -2,13 +2,16 @@ package com.example.guest.sunlightcongress;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +37,7 @@ public class MainActivity extends ListActivity {
     private EditText mEnterZipCode;
     private String mZipCode;
     private TextView mNameLabel;
-    private TextView mLastNameLabel;
+    private TextView mPhoneLabel;
     private LegislatorAdapter mAdapter;
     private ArrayList<Legislator> mLegislators;
 
@@ -64,6 +67,18 @@ public class MainActivity extends ListActivity {
 
             }
         });
+
+
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id){
+        super.onListItemClick(l, v, position, id);
+        Legislator legislator = mLegislators.get(position);
+        Uri number = Uri.parse("tel:" + legislator.getPhone());
+        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+        startActivity(callIntent);
+
     }
 
     private void findRepresentatives(String zipCode) {
@@ -120,10 +135,13 @@ public class MainActivity extends ListActivity {
 
     }
 
-    private void updateDisplay() {
-        mNameLabel.setText(mLegislator.getFirstName());
-        mLastNameLabel.setText(mLegislator.getLastName());
-    }
+//    private void updateDisplay() {
+//        mNameLabel.setText(mLegislator.getFirstName());
+//        mLastNameLabel.setText(mLegislator.getLastName());
+//
+//    }
+
+
 
     public ArrayList<Legislator> getLegislatorDetails(String jsonData) throws JSONException {
 
@@ -137,8 +155,9 @@ public class MainActivity extends ListActivity {
 
             String firstName = nextLegistlator.getString("first_name");
             String lastName = nextLegistlator.getString("last_name");
+            String phone = nextLegistlator.getString("phone");
 
-            Legislator legislator = new Legislator(firstName, lastName);
+            Legislator legislator = new Legislator(firstName, lastName, phone);
             mLegislators.add(legislator);
         }
 

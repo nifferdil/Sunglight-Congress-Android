@@ -3,10 +3,12 @@ package com.example.guest.sunlightcongress;
 public class Legislator {
     private String mFirstName;
     private String mLastName;
+    private String mPhone;
 
-    public Legislator(String firstName, String lastName) {
+    public Legislator(String firstName, String lastName, String phone) {
         mFirstName = firstName;
         mLastName = lastName;
+        mPhone = phone;
     }
 
     public String getFirstName() {
@@ -23,6 +25,14 @@ public class Legislator {
 
     public void setLastName(String lastName) {
         mLastName = lastName;
+    }
+
+    public String getPhone() {
+        return mPhone;
+    }
+
+    public void setPhone(String phone) {
+        mPhone = phone;
     }
 
     public String getFullName() {

@@ -41,6 +41,7 @@ public class LegislatorAdapter extends BaseAdapter {
 
     private static class ViewHolder {
         TextView nameLabel;
+        TextView phoneLabel;
     }
 
     @Override
@@ -51,6 +52,7 @@ public class LegislatorAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.legislator_list_item, null);
             holder = new ViewHolder();
             holder.nameLabel = (TextView) convertView.findViewById(R.id.nameLabel);
+            holder.phoneLabel = (TextView) convertView.findViewById(R.id.phoneLabel);
 
             convertView.setTag(holder);
         } else {
@@ -60,6 +62,7 @@ public class LegislatorAdapter extends BaseAdapter {
         Legislator legislator = mLegislators.get(position);
 
         holder.nameLabel.setText(legislator.getFullName());
+        holder.phoneLabel.setText(legislator.getPhone());
 
         return convertView;
     }
