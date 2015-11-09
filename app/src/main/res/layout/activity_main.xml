@@ -32,7 +32,8 @@
         android:text="Submit"
         android:id="@+id/enterZipCodeButton"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        />
 
     <ListView
         android:layout_width="match_parent"
@@ -42,5 +43,25 @@
         android:layout_marginTop="34dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Friend&apos;s Legislator"
+        android:id="@+id/friendButton"
+        android:layout_alignBottom="@+id/enterZipCodeButton"
+        android:layout_toRightOf="@+id/enterZipCodeButton"
+        android:layout_toEndOf="@+id/enterZipCodeButton"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take Photo"
+        android:id="@+id/photoButton"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/textView"
+        android:layout_toStartOf="@+id/textView"/>
 
 </RelativeLayout>

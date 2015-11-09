@@ -80,7 +80,7 @@ public class LegislatorAdapter extends BaseAdapter {
             public void onClick(View v) {
                 Uri location = Uri.parse("geo:0,0?q=" + office + "," + state);
 
-                //Uri location = Uri.parse("geo:0,0?q=1600+Amphitheatre+Parkway,+Mountain+View,+California");
+                //hUri location = Uri.parse("geo:0,0?q=1600+Amphitheatre+Parkway,+Mountain+View,+California");
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
                 mContext.startActivity(mapIntent);
             }

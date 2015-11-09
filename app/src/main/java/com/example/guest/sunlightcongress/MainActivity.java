@@ -2,9 +2,11 @@ package com.example.guest.sunlightcongress;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,12 +33,19 @@ public class MainActivity extends ListActivity {
 
     private Legislator mLegislator;
     private Button mZipCodeButton;
+    private Button mPhoneButton;
     private EditText mEnterZipCode;
     private String mZipCode;
     private TextView mNameLabel;
     private TextView mPhoneLabel;
     private LegislatorAdapter mAdapter;
     private ArrayList<Legislator> mLegislators;
+    private Button mFriendButton;
+    static final int PICK_CONTACT = 1;  // The request code
+    private String cNumber;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+
+
 
 
     @Override
@@ -47,8 +56,9 @@ public class MainActivity extends ListActivity {
         mNameLabel = (TextView) findViewById(R.id.nameLabel);
         //mLastNameLabel = (TextView) findViewById(R.id.lastNameLabel);
         mZipCodeButton = (Button) findViewById(R.id.enterZipCodeButton);
+        mPhoneButton = (Button) findViewById(R.id.photoButton);
         mEnterZipCode = (EditText) findViewById(R.id.enterZipCode);
-
+        mFriendButton = (Button) findViewById(R.id.friendButton);
         mLegislators = new ArrayList<Legislator>();
 
         mAdapter = new LegislatorAdapter(this, mLegislators);
@@ -66,7 +76,73 @@ public class MainActivity extends ListActivity {
         });
 
 
+        mPhoneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dispatchTakePictureIntent();
+            }
+        });
+
     }
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+
+//        mFriendButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+
+//                private void pickContact() {
+//                    Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
+//                    pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
+//                    startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST);
+//                }
+
+//                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+//                startActivityForResult(intent, PICK_CONTACT);
+//            }
+//        });
+//
+//    }
+//
+//    //code
+//    @Override
+//    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+//        super.onActivityResult(reqCode, resultCode, data);
+//
+//        switch (reqCode) {
+//            case (PICK_CONTACT) :
+//                if (resultCode == Activity.RESULT_OK) {
+//
+//                    Uri contactData = data.getData();
+//                    Cursor c =  managedQuery(contactData, null, null, null, null);
+//                    if (c.moveToFirst()) {
+//
+//
+//                        String id =c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+//
+//                        String hasPhone =c.getString(c.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+//
+//                        if (hasPhone.equalsIgnoreCase("1")) {
+//                            Cursor phones = getContentResolver().query(
+//                                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
+//                                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = "+ id,
+//                                    null, null);
+//                            phones.moveToFirst();
+//                            cNumber = phones.getString(phones.getColumnIndex("data1"));
+//                            System.out.println("number is:"+cNumber);
+//                        }
+//                        String name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+//
+//
+//                    }
+//                }
+//                break;
+//        }
 
 
     private void findRepresentatives(String zipCode) {
