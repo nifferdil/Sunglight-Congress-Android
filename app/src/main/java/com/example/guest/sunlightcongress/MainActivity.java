@@ -2,16 +2,13 @@ package com.example.guest.sunlightcongress;
 
 import android.app.ListActivity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,15 +68,6 @@ public class MainActivity extends ListActivity {
 
     }
 
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id){
-        super.onListItemClick(l, v, position, id);
-        Legislator legislator = mLegislators.get(position);
-        Uri number = Uri.parse("tel:" + legislator.getPhone());
-        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
-        startActivity(callIntent);
-
-    }
 
     private void findRepresentatives(String zipCode) {
         String apiKey = "b77ebc6b16a64f1ab2a2a1c8d0271963";
@@ -156,8 +144,10 @@ public class MainActivity extends ListActivity {
             String firstName = nextLegistlator.getString("first_name");
             String lastName = nextLegistlator.getString("last_name");
             String phone = nextLegistlator.getString("phone");
+            String office = nextLegistlator.getString("office");
+            String state = nextLegistlator.getString("state");
 
-            Legislator legislator = new Legislator(firstName, lastName, phone);
+            Legislator legislator = new Legislator(firstName, lastName, phone, office, state);
             mLegislators.add(legislator);
         }
 

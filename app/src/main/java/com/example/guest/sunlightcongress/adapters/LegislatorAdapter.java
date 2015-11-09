@@ -1,10 +1,13 @@
 package com.example.guest.sunlightcongress.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.guest.sunlightcongress.Legislator;
@@ -45,8 +48,10 @@ public class LegislatorAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
+
+
 
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.legislator_list_item, null);
@@ -59,10 +64,33 @@ public class LegislatorAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Legislator legislator = mLegislators.get(position);
+        final Legislator legislator = mLegislators.get(position);
 
         holder.nameLabel.setText(legislator.getFullName());
         holder.phoneLabel.setText(legislator.getPhone());
+        final String phoneNum = legislator.getPhone();
+        
+
+        Button mapButton = (Button) convertView.findViewById(R.id.mapButton);
+
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri location = Uri.parse("geo:0,0?q=1600+Amphitheatre+Parkway,+Mountain+View,+California");
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
+                mContext.startActivity(mapIntent);
+            }
+        });
+
+        holder.phoneLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Uri number = Uri.parse("tel:" + phoneNum);
+                Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+                mContext.startActivity(callIntent);
+            }
+        });
 
         return convertView;
     }
