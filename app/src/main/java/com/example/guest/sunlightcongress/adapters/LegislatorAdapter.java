@@ -69,14 +69,18 @@ public class LegislatorAdapter extends BaseAdapter {
         holder.nameLabel.setText(legislator.getFullName());
         holder.phoneLabel.setText(legislator.getPhone());
         final String phoneNum = legislator.getPhone();
-        
+        final String office = legislator.getOffice();
+        final String state = legislator.getState();
+
 
         Button mapButton = (Button) convertView.findViewById(R.id.mapButton);
 
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri location = Uri.parse("geo:0,0?q=1600+Amphitheatre+Parkway,+Mountain+View,+California");
+                Uri location = Uri.parse("geo:0,0?q=" + office + "," + state);
+
+                //Uri location = Uri.parse("geo:0,0?q=1600+Amphitheatre+Parkway,+Mountain+View,+California");
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
                 mContext.startActivity(mapIntent);
             }
